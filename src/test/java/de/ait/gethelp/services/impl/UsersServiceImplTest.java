@@ -95,7 +95,7 @@ class UsersServiceImplTest {
         assertEquals(expectedProfile, userProfile);
     }
 
-
+    @Name("Update Profile")
     @Test
     void editProfile() {
 
@@ -112,7 +112,6 @@ class UsersServiceImplTest {
                 .phone("11111")
                 .role("USER")
                 .isHelper(true)
-                // .cards(cardsPage)
                 .build();
 
         ProfileDto actual = usersService.editProfile(1L, newProfileDto);
