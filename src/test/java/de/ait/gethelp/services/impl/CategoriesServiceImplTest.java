@@ -4,6 +4,7 @@ import de.ait.gethelp.dto.CategoryDto;
 import de.ait.gethelp.dto.NewCategoryDto;
 import de.ait.gethelp.models.Category;
 import de.ait.gethelp.repositories.CategoriesRepository;
+import jdk.jfr.Name;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,10 +72,11 @@ class CategoriesServiceImplTest {
     void getById() {
     }
 
+    @Name("Add Category with reported bug")
     @Test
     void addCategory() {
 
-        //lenient().when(categoriesRepository.save(category)).thenReturn(expected);
+
         when(categoriesRepository.save(any())).thenReturn(expected);
 
         CategoryDto exp = CategoryDto.builder()
