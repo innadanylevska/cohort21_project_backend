@@ -1,9 +1,6 @@
 package de.ait.gethelp.services.impl;
 
-import de.ait.gethelp.dto.CardDto;
-import de.ait.gethelp.dto.CardsPage;
-import de.ait.gethelp.dto.NewProfileDto;
-import de.ait.gethelp.dto.ProfileDto;
+import de.ait.gethelp.dto.*;
 import de.ait.gethelp.exceptions.ForbiddenException;
 import de.ait.gethelp.exceptions.NotFoundException;
 import de.ait.gethelp.models.Card;
@@ -76,4 +73,7 @@ public class UsersServiceImpl implements UsersService {
                 .cards(from(cardsRepository.findAllByUser_Id(currentUserId)))
                 .build();
     }
+
+//    public UserDto signUp(NewUserDto newUserDto) {
+//    }
 }

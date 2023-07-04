@@ -57,7 +57,7 @@ public class UserControllerUSERTest {
 
     @BeforeEach
     void setUp() {
-                when(usersRepository.findById(1L)).thenReturn(
+        when(usersRepository.findById(1L)).thenReturn(
                 Optional.of(User.builder()
                         .id(1L)
                         .role(User.Role.USER)
@@ -73,7 +73,9 @@ public class UserControllerUSERTest {
     @WithUserDetails(value = "jack")
     @Test
     @DisplayName("Get User Profile")
-    void getProfileAdmin() throws Exception {
+    void getProfileUser() throws Exception {
+
+
         mockMvc
                 .perform((RequestBuilder) get("/api/users/my/profile")).andDo(print())
                 .andExpect(status().isOk())

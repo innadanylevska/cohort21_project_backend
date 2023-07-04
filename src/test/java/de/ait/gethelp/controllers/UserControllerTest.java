@@ -1,29 +1,39 @@
 package de.ait.gethelp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.ait.gethelp.models.Card;
 import de.ait.gethelp.models.User;
 import de.ait.gethelp.repositories.CardsRepository;
 import de.ait.gethelp.repositories.CategoriesRepository;
 import de.ait.gethelp.repositories.SubCategoriesRepository;
 import de.ait.gethelp.repositories.UsersRepository;
 import de.ait.gethelp.services.UsersService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(UserControllerUSERTest.class)
 public class UserControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -43,6 +53,54 @@ public class UserControllerTest {
     public UserControllerTest(UsersService usersService) {
         this.usersService = usersService;
 
+    }
+
+    @BeforeEach
+    void setUp() {
+    }
+
+
+
+   /*---------------------getProfile()--------------------*/
+    @WithUserDetails(value = "jack")
+    @Test
+    @DisplayName("Get User Profile")
+    void getProfileUser() throws Exception {
+        when(usersRepository.findById(1L)).thenReturn(
+                Optional.of(User.builder()
+                        .id(1L)
+                        .role(User.Role.USER)
+                        .email("jack")
+                        .build()));
+        when(cardsRepository.findAllByUser_Id(1l)).thenReturn(
+                new ArrayList<Card>()
+        );
+        mockMvc
+                .perform((RequestBuilder) get("/api/users/my/profile")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.email", is("jack")))
+                .andExpect(jsonPath("$.role", is("USER")));
+    }
+    @WithUserDetails(value = "admin")
+    @Test
+    @DisplayName("Get admin Profile")
+    void getProfileAdmin() throws Exception {
+        when(usersRepository.findById(1L)).thenReturn(
+                Optional.of(User.builder()
+                        .id(1L)
+                        .role(User.Role.ADMIN)
+                        .email("admin")
+                        .build()));
+        when(cardsRepository.findAllByUser_Id(1l)).thenReturn(
+                new ArrayList<Card>()
+        );
+        mockMvc
+                .perform((RequestBuilder) get("/api/users/my/profile")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.email", is("admin")))
+                .andExpect(jsonPath("$.role", is("ADMIN")));
     }
 /*
 -------------------------ADD--------------POST----------------
@@ -247,7 +305,7 @@ public class UserControllerTest {
                 .andDo(print()
                 );
     }
-
+    /*---------------------editProfile()--------------------*/
     @Test
     public void updateShouldReturn200OK() throws Exception {
         long userId = 1025l;
