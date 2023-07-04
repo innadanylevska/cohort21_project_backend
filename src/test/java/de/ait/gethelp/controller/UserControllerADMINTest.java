@@ -1,7 +1,7 @@
-package de.ait.gethelp.controllers;
+package de.ait.gethelp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.ait.gethelp.security.config.TestConfig;
+import de.ait.gethelp.Config.TestConfig;
 import de.ait.gethelp.models.Card;
 import de.ait.gethelp.models.User;
 import de.ait.gethelp.repositories.CardsRepository;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,11 +22,10 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import static org.hamcrest.Matchers.*;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = TestConfig.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class UserControllerUSERTest {
+public class UserControllerADMINTest {
 
 
     @Autowired
@@ -57,11 +55,11 @@ public class UserControllerUSERTest {
 
     @BeforeEach
     void setUp() {
-        when(usersRepository.findById(1L)).thenReturn(
+                when(usersRepository.findById(1L)).thenReturn(
                 Optional.of(User.builder()
                         .id(1L)
-                        .role(User.Role.USER)
-                        .email("jack")
+                        .role(User.Role.ADMIN)
+                        .email("admin")
                         .build()));
         when(cardsRepository.findAllByUser_Id(1l)).thenReturn(
                 new ArrayList<Card>()
@@ -70,18 +68,16 @@ public class UserControllerUSERTest {
     }
 
 
-    @WithUserDetails(value = "jack")
+    @WithUserDetails(value = "admin")
     @Test
-    @DisplayName("Get User Profile")
-    void getProfileUser() throws Exception {
-
-
+    @DisplayName("Get admin Profile")
+    void getProfileAdmin() throws Exception {
         mockMvc
                 .perform((RequestBuilder) get("/api/users/my/profile")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.email", is("jack")))
-                .andExpect(jsonPath("$.role", is("USER")));
+                .andExpect(jsonPath("$.email", is("admin")))
+                .andExpect(jsonPath("$.role", is("ADMIN")));
     }
 
 
